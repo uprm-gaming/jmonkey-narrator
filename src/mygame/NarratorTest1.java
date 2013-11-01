@@ -4,6 +4,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.Trigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
@@ -12,6 +13,14 @@ import com.jme3.system.AppSettings;
 
 public class NarratorTest1 extends SimpleApplication implements ActionListener {
     NarratorNiftyGui gameNarrator;
+    
+    private static final String MAPPING_FIRST_MSG = "narrator first Message";
+    private static final String MAPPING_SECOND_MSG = "narrator second Message";
+    private static final String MAPPING_THIRD_MSG = "narrator third Message";
+    
+    private static final Trigger TRIGGER_FIRST_MSG = new KeyTrigger(KeyInput.KEY_1);
+    private static final Trigger TRIGGER_SECOND_MSG = new KeyTrigger(KeyInput.KEY_2);
+    private static final Trigger TRIGGER_THIRD_MSG = new KeyTrigger(KeyInput.KEY_3);
     
     public static void main(String[] args) 
     {
@@ -59,25 +68,28 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
     
     private void initKeyboardControls() 
     {
-        inputManager.addMapping("first message", new KeyTrigger(KeyInput.KEY_1));
-        inputManager.addMapping("second message", new KeyTrigger(KeyInput.KEY_2));
-        inputManager.addMapping("third message", new KeyTrigger(KeyInput.KEY_3));
-        inputManager.addListener(this, "first message", "second message", "third message");
+        String[] mappings = {MAPPING_FIRST_MSG, MAPPING_SECOND_MSG, MAPPING_THIRD_MSG};
+        Trigger[] triggers = {TRIGGER_FIRST_MSG, TRIGGER_SECOND_MSG, TRIGGER_THIRD_MSG};
+
+        for (int i = 0; i < mappings.length; i++) {
+            inputManager.addMapping(mappings[i], triggers[i]);
+            inputManager.addListener(this, mappings[i]);
+        }
     }
     
     @Override
     public void onAction(String name, boolean isKeyPressed, float tpf) {
         switch (name)
         {
-            case "first message":
+            case MAPPING_FIRST_MSG:
                 if (!isKeyPressed)
                     gameNarrator.talk("Hey there.");
                 break;
-            case "second message":
+            case MAPPING_SECOND_MSG:
                 if (!isKeyPressed)
                     gameNarrator.talk("I'm a blue box.");
                 break;
-            case "third message":
+            case MAPPING_THIRD_MSG:
                 if (!isKeyPressed)
                     gameNarrator.talk("Are you bored? Because I'm certainly not.");
                 break;
