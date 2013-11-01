@@ -70,7 +70,6 @@ public class NarratorNiftyGui
             narratorPanel.show();
 
         getNiftyElement("narrator_text").getRenderer(TextRenderer.class).setText(text);
-        hidePanelAfterDelay(7);
     }
     
     private void playAudioFile(String path)
@@ -86,6 +85,11 @@ public class NarratorNiftyGui
             narratorVoicedText.stop();
             narratorVoicedText = null;
         }
+    }
+    
+    public void hideNarrator()
+    {
+        narratorPanel.hide();
     }
     
     private synchronized void hidePanelAfterDelay(int seconds)
