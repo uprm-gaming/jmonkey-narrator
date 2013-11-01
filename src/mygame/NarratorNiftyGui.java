@@ -21,6 +21,7 @@ public class NarratorNiftyGui
     private Nifty nifty;
     private Element narratorPanel;
     private Timer timer;
+    private AudioNode narratorVoicedText;
     
     private NarratorNiftyGui(AssetManager assetManager, InputManager inputManager, 
                             AudioRenderer audioRenderer, ViewPort guiViewPort) 
@@ -74,9 +75,17 @@ public class NarratorNiftyGui
     
     private void playAudioFile(String path)
     {
-        AudioNode narratorVoicedText = new AudioNode(assetManager, path, false);
-        narratorVoicedText.setPositional(false);
+        flushAudio();
+        narratorVoicedText = new AudioNode(assetManager, path, false);
         narratorVoicedText.play();
+    }
+    
+    private void flushAudio()
+    {
+        if (narratorVoicedText != null) {
+            narratorVoicedText.stop();
+            narratorVoicedText = null;
+        }
     }
     
     private synchronized void hidePanelAfterDelay(int seconds)
