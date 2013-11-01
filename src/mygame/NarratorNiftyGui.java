@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.input.InputManager;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -55,6 +56,12 @@ public class NarratorNiftyGui
     {
         return new NarratorNiftyGui(assetManager, inputManager, audioRenderer, guiViewPort);
     }
+
+    public void talk(String text, String audioPathFile) 
+    {
+        talk(text);
+        playAudioFile(audioPathFile);
+    }
     
     public void talk(String text)
     {
@@ -62,7 +69,14 @@ public class NarratorNiftyGui
             narratorPanel.show();
 
         getNiftyElement("narrator_text").getRenderer(TextRenderer.class).setText(text);
-        hidePanelAfterDelay(3);
+        hidePanelAfterDelay(7);
+    }
+    
+    private void playAudioFile(String path)
+    {
+        AudioNode narratorVoicedText = new AudioNode(assetManager, path, false);
+        narratorVoicedText.setPositional(false);
+        narratorVoicedText.play();
     }
     
     private synchronized void hidePanelAfterDelay(int seconds)

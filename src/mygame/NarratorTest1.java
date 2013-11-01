@@ -26,7 +26,7 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
     {
         AppSettings customSettings = new AppSettings(true);
         customSettings.setTitle("Narrator Test 1");
-        customSettings.setResolution(800, 600);
+        customSettings.setResolution(1280, 720);
         
         NarratorTest1 app = new NarratorTest1();
         app.setSettings(customSettings);
@@ -83,15 +83,18 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
         {
             case MAPPING_FIRST_MSG:
                 if (!isKeyPressed)
-                    gameNarrator.talk("Hey there.");
+                    gameNarrator.talk("Hi there. Welcome to Abner Coimbre's blue box demo.",
+                                      "Sounds/bluebox1.wav");
                 break;
             case MAPPING_SECOND_MSG:
                 if (!isKeyPressed)
-                    gameNarrator.talk("I'm a blue box.");
+                    gameNarrator.talk("Congratulations! Your narrator program is working perfectly.",
+                                       "Sounds/bluebox2.wav");
                 break;
             case MAPPING_THIRD_MSG:
                 if (!isKeyPressed)
-                    gameNarrator.talk("Are you bored? Because I'm certainly not.");
+                    gameNarrator.talk("You can now implement the narrator to Yaguez Virtual Factory 2.0",
+                                      "Sounds/bluebox3.wav");
                 break;
             default:
                 break;
