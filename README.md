@@ -5,4 +5,4 @@ An in-game narrator that can be used in your jMonkeyEngine projects.
 
 Engine: jMonkeyEngine 3
 
-Language: Java
+Language: Java 7
