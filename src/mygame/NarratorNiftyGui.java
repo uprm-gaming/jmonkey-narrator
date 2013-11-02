@@ -1,8 +1,6 @@
 package mygame;
 
-import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
@@ -22,7 +20,7 @@ public class NarratorNiftyGui extends AbstractAppState
     private ViewPort guiViewPort;
     private Nifty nifty;
     private Element narratorPanel;
-    private AudioNode narratorVoicedText;
+    private AudioNode voiceText;
     
     private NarratorNiftyGui(AssetManager assetManager, InputManager inputManager, 
                             AudioRenderer audioRenderer, ViewPort guiViewPort) 
@@ -45,7 +43,7 @@ public class NarratorNiftyGui extends AbstractAppState
     
     private void initializeNarratorPanel()
     {
-        narratorPanel = getNiftyElement("narrator_panel");
+        narratorPanel = nifty.getCurrentScreen().findElementByName("narrator_panel");
         narratorPanel.hide();
     }
     
@@ -73,44 +71,32 @@ public class NarratorNiftyGui extends AbstractAppState
     private void playAudioFile(String path)
     {
         flushAudio();
-        narratorVoicedText = new AudioNode(assetManager, path, false);
-        narratorVoicedText.setPitch(1.1f);
-        narratorVoicedText.play();
+        voiceText = new AudioNode(assetManager, path, false);
+        voiceText.setPitch(1.1f);
+        voiceText.play();
     }
     
     private void flushAudio()
     {
-        if (narratorVoicedText != null) 
+        if (voiceText != null) 
         {
-            narratorVoicedText.stop();
-            narratorVoicedText = null;
+            voiceText.stop();
+            voiceText = null;
         }
     }
     
     public boolean hasStoppedTalking()
     {
-        return narratorVoicedText.getStatus() == AudioSource.Status.Stopped;
+        return voiceText.getStatus() == AudioSource.Status.Stopped;
     }
 
-    private Element getNiftyElement(final String id) 
-    {
-        return nifty.getCurrentScreen().findElementByName(id);
-    }
-    
-    @Override
-    public void initialize(AppStateManager stateManager, Application app)
-    {
-        super.initialize(stateManager, app);
-    }
-    
     @Override
     public void update(float tpf)
     {
-        System.out.println("Entered here.");
-        if (narratorVoicedText == null)
+        if (voiceText == null)
             return;
         
-       if (hasStoppedTalking())
-           narratorPanel.hide();
+        if (hasStoppedTalking())
+            narratorPanel.hide();
     }
 }
