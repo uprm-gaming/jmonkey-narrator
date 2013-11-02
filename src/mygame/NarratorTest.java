@@ -11,7 +11,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 
-public class NarratorTest1 extends SimpleApplication implements ActionListener {
+public class NarratorTest extends SimpleApplication implements ActionListener {
     NarratorNiftyGui gameNarrator;
     
     private static final String MAPPING_FIRST_MSG = "narrator first Message";
@@ -28,7 +28,7 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
         customSettings.setTitle("Narrator Test 1");
         customSettings.setResolution(1280, 720);
         
-        NarratorTest1 app = new NarratorTest1();
+        NarratorTest app = new NarratorTest();
         app.setSettings(customSettings);
         app.setShowSettings(false);
         app.setPauseOnLostFocus(false);
@@ -39,10 +39,9 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
     public void simpleInitApp() 
     {
         shutDownDefaultHUD();
-        gameNarrator = getGameNarrator();
-        stateManager.attach(gameNarrator);
-        createAndDisplayBox();
+        initGameNarrator();
         initKeyboardControls();
+        createAndDisplayBox();
         flyCam.setMoveSpeed(20.0f);
     }
     
@@ -52,19 +51,16 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
         setDisplayStatView(false);
     }
     
+    private void initGameNarrator()
+    {
+        gameNarrator = getGameNarrator();
+        stateManager.attach(gameNarrator);
+    }
+    
     private NarratorNiftyGui getGameNarrator() 
     {
         return NarratorNiftyGui.newInstance(assetManager, inputManager, 
                                             audioRenderer, guiViewPort);
-    }
-    
-    private void createAndDisplayBox() 
-    {
-        Geometry boxGeometry = new Geometry("Box", new Box(1, 1, 1));
-        Material boxMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        boxMaterial.setColor("Color", ColorRGBA.Blue);
-        boxGeometry.setMaterial(boxMaterial);
-        rootNode.attachChild(boxGeometry);
     }
     
     private void initKeyboardControls() 
@@ -76,6 +72,15 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
             inputManager.addMapping(mappings[i], triggers[i]);
             inputManager.addListener(this, mappings[i]);
         }
+    }
+    
+    private void createAndDisplayBox() 
+    {
+        Geometry boxGeometry = new Geometry("Box", new Box(1, 1, 1));
+        Material boxMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        boxMaterial.setColor("Color", ColorRGBA.Blue);
+        boxGeometry.setMaterial(boxMaterial);
+        rootNode.attachChild(boxGeometry);
     }
     
     @Override

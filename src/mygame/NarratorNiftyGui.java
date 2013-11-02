@@ -67,14 +67,14 @@ public class NarratorNiftyGui extends AbstractAppState
     {
         if (!narratorPanel.isVisible())
             narratorPanel.show();
-
-        getNiftyElement("narrator_text").getRenderer(TextRenderer.class).setText(text);
+        narratorPanel.findElementByName("narrator_text").getRenderer(TextRenderer.class).setText(text);
     }
     
     private void playAudioFile(String path)
     {
         flushAudio();
         narratorVoicedText = new AudioNode(assetManager, path, false);
+        narratorVoicedText.setPitch(1.1f);
         narratorVoicedText.play();
     }
     
@@ -89,9 +89,6 @@ public class NarratorNiftyGui extends AbstractAppState
     
     public boolean hasStoppedTalking()
     {
-        if (narratorVoicedText == null)
-            return false;
-
         return narratorVoicedText.getStatus() == AudioSource.Status.Stopped;
     }
 
@@ -109,6 +106,10 @@ public class NarratorNiftyGui extends AbstractAppState
     @Override
     public void update(float tpf)
     {
+        System.out.println("Entered here.");
+        if (narratorVoicedText == null)
+            return;
+        
        if (hasStoppedTalking())
            narratorPanel.hide();
     }
