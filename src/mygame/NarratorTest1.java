@@ -40,6 +40,7 @@ public class NarratorTest1 extends SimpleApplication implements ActionListener {
     {
         shutDownDefaultHUD();
         gameNarrator = getGameNarrator();
+        stateManager.attach(gameNarrator);
         createAndDisplayBox();
         initKeyboardControls();
         flyCam.setMoveSpeed(20.0f);

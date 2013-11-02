@@ -9,7 +9,7 @@
     <screen id="start" controller="edu.uprm.gaming.graphic.nifty.NarratorScreenController">
     <layer id="foreground" childLayout="vertical">
       <panel width="100%" height="70%" childLayout="vertical"></panel>  
-      <panel id="narrator_panel" width="100%" heigth="10%" childLayout="center" backgroundColor="#333300">
+      <panel id="narrator_panel" width="60%" heigth="10%" align="center" childLayout="center" backgroundColor="#333300">
         <text id="narrator_text" text="" font="Interface/ArialRoundedMTBold.fnt" 
               width="100%" height="10%" wrap="true"/>
       </panel>

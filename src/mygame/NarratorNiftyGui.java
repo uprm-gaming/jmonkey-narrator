@@ -1,18 +1,20 @@
 package mygame;
 
+import com.jme3.app.Application;
+import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
+import com.jme3.audio.AudioSource;
 import com.jme3.input.InputManager;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.ViewPort;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.TextRenderer;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class NarratorNiftyGui 
+public class NarratorNiftyGui extends AbstractAppState
 {
     private AssetManager assetManager;
     private InputManager inputManager;
@@ -20,7 +22,6 @@ public class NarratorNiftyGui
     private ViewPort guiViewPort;
     private Nifty nifty;
     private Element narratorPanel;
-    private Timer timer;
     private AudioNode narratorVoicedText;
     
     private NarratorNiftyGui(AssetManager assetManager, InputManager inputManager, 
@@ -30,15 +31,13 @@ public class NarratorNiftyGui
         this.inputManager = inputManager;
         this.audioRenderer = audioRenderer;
         this.guiViewPort = guiViewPort;
-        this.timer = new Timer();
         createNiftyScreen();
         initializeNarratorPanel();
     }
     
     private void createNiftyScreen()
     {
-        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(
-                assetManager, inputManager, audioRenderer, guiViewPort);
+        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         nifty = niftyDisplay.getNifty();
         nifty.fromXml("Interface/screen.xml", "start");
         guiViewPort.addProcessor(niftyDisplay);
@@ -64,7 +63,7 @@ public class NarratorNiftyGui
         playAudioFile(audioPathFile);
     }
     
-    public void talk(String text)
+    private void talk(String text)
     {
         if (!narratorPanel.isVisible())
             narratorPanel.show();
@@ -81,31 +80,36 @@ public class NarratorNiftyGui
     
     private void flushAudio()
     {
-        if (narratorVoicedText != null) {
+        if (narratorVoicedText != null) 
+        {
             narratorVoicedText.stop();
             narratorVoicedText = null;
         }
     }
     
-    public void hideNarrator()
+    public boolean hasStoppedTalking()
     {
-        narratorPanel.hide();
+        if (narratorVoicedText == null)
+            return false;
+
+        return narratorVoicedText.getStatus() == AudioSource.Status.Stopped;
     }
-    
-    private synchronized void hidePanelAfterDelay(int seconds)
-    {
-        TimerTask timerAction = new TimerTask() {
-            @Override
-            public void run() 
-            {
-                narratorPanel.hide();
-            }
-        };
-        timer.schedule(timerAction, seconds*1000);
-    }
-    
+
     private Element getNiftyElement(final String id) 
     {
         return nifty.getCurrentScreen().findElementByName(id);
+    }
+    
+    @Override
+    public void initialize(AppStateManager stateManager, Application app)
+    {
+        super.initialize(stateManager, app);
+    }
+    
+    @Override
+    public void update(float tpf)
+    {
+       if (hasStoppedTalking())
+           narratorPanel.hide();
     }
 }
