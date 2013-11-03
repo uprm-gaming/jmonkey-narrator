@@ -6,7 +6,7 @@
     <useStyles filename="nifty-default-styles.xml"/>
     <useControls filename="nifty-default-controls.xml"/>
     
-    <screen id="start" controller="edu.uprm.gaming.graphic.nifty.NarratorScreenController">
+    <screen id="start">
     <layer id="foreground" childLayout="vertical">
       <panel width="100%" height="70%" childLayout="vertical"></panel>  
       <panel id="narrator_panel" width="60%" heigth="10%" align="center" childLayout="center" backgroundColor="#333300">
