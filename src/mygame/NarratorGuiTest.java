@@ -41,7 +41,9 @@ public class NarratorGuiTest extends SimpleApplication
     private void initializeNarrator()
     {
         gameNarrator = new NarratorGuiNode(assetManager, guiNode);
-        gameNarrator.talk("Hi there.", INPUT_MAPPING_EXIT);
+        stateManager.attach(gameNarrator);
+        gameNarrator.talk(assetManager, "Hi there.", "Interface/bluebox1.wav");
+        System.out.println(guiNode);
     }
     
     private void displayColoredBox(ColorRGBA color)

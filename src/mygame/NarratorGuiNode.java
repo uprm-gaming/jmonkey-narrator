@@ -1,18 +1,20 @@
 package mygame;
 
+import com.jme3.app.Application;
+import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 
 public class NarratorGuiNode extends AbstractAppState
 {
-    private AssetManager assetManager;
+    private SimpleApplication simpleApp;
     private BitmapText narratorText;
     private AudioNode narratorAudio;
     
@@ -25,27 +27,26 @@ public class NarratorGuiNode extends AbstractAppState
         guiNode.attachChild(narratorText);
     }
     
-    public void talk(String text, String audioPathFile) 
+    public void talk(AssetManager assetManager, String text, String audioPathFile) 
     {
         talk(text);
-        playAudioFile(audioPathFile);
+        playAudioFile(assetManager, audioPathFile);
     }
     
     private void talk(String text)
     {
-        if (narratorText.getCullHint() == CullHint.Never)
-            narratorText.setCullHint(CullHint.Always);
-        narratorText.setCullHint(Spatial.CullHint.Always);
+        if (narratorText.getCullHint() == CullHint.Always)
+            narratorText.setCullHint(CullHint.Never);
         narratorText.setText(text);
         System.out.println("Made it here.");
     }
     
-    private void playAudioFile(String path)
+    private void playAudioFile(AssetManager assetManager, String path)
     {
         flushAudio();
-        //narratorAudio = new AudioNode(assetManager, "Interface/sounds/bluebox1.wav", false);
-        //narratorAudio.setPitch(1.1f);
-        //narratorAudio.play();
+        narratorAudio = new AudioNode(assetManager, path, false);
+        narratorAudio.setPitch(1.1f);
+        narratorAudio.play();
     }
     
     private void flushAudio()
@@ -61,10 +62,21 @@ public class NarratorGuiNode extends AbstractAppState
     {
         return narratorAudio.getStatus() == AudioSource.Status.Stopped;
     }
+    
+    @Override
+    public void initialize(AppStateManager stateManager, Application app)
+    {
+        super.initialize(stateManager, app);
+        simpleApp = (SimpleApplication) app;
+    }
 
     @Override
     public void update(float tpf)
     {
-
+        if (narratorText == null)
+            return;
+        
+        if (hasStoppedTalking())
+            narratorText.setCullHint(CullHint.Always);
     }
 }
