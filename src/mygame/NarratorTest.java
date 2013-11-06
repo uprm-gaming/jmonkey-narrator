@@ -11,8 +11,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.system.AppSettings;
 
-public class NarratorNiftyTest extends SimpleApplication implements ActionListener {
-    NarratorNiftyGui gameNarrator;
+public class NarratorTest extends SimpleApplication implements ActionListener
+{
+    NarratorAppState gameNarrator;
     
     private static final String MAPPING_FIRST_MSG = "narrator first Message";
     private static final String MAPPING_SECOND_MSG = "narrator second Message";
@@ -22,28 +23,28 @@ public class NarratorNiftyTest extends SimpleApplication implements ActionListen
     private static final Trigger TRIGGER_SECOND_MSG = new KeyTrigger(KeyInput.KEY_2);
     private static final Trigger TRIGGER_THIRD_MSG = new KeyTrigger(KeyInput.KEY_3);
     
-    public static void main(String[] args) 
+    public static void main(String[] args)
     {
         AppSettings customSettings = new AppSettings(true);
-        customSettings.setTitle("Narrator Test 1");
+        customSettings.setTitle("Narrator Test");
         customSettings.setResolution(1280, 720);
         
-        NarratorNiftyTest app = new NarratorNiftyTest();
+        NarratorTest app = new NarratorTest();
         app.setSettings(customSettings);
         app.setShowSettings(false);
         app.setPauseOnLostFocus(false);
-        app.start();
+        app.start(); // calls simpleInitApp()
     }
-    
+
     @Override
     public void simpleInitApp() 
     {
         shutDownDefaultHUD();
-        initGameNarrator();
+        initializeNarrator();
         initKeyboardControls();
-        createAndDisplayBox();
-        flyCam.setMoveSpeed(20.0f);
-    }
+        displayColoredBox(ColorRGBA.Blue);
+        flyCam.setMoveSpeed(15.0f);
+    } 
     
     private void shutDownDefaultHUD()
     {
@@ -51,16 +52,10 @@ public class NarratorNiftyTest extends SimpleApplication implements ActionListen
         setDisplayStatView(false);
     }
     
-    private void initGameNarrator()
+    private void initializeNarrator()
     {
-        gameNarrator = getGameNarrator();
+        gameNarrator = NarratorAppState.newInstance(assetManager, guiNode);
         stateManager.attach(gameNarrator);
-    }
-    
-    private NarratorNiftyGui getGameNarrator() 
-    {
-        return NarratorNiftyGui.newInstance(assetManager, inputManager, 
-                                            audioRenderer, guiViewPort);
     }
     
     private void initKeyboardControls() 
@@ -74,40 +69,39 @@ public class NarratorNiftyTest extends SimpleApplication implements ActionListen
         }
     }
     
-    private void createAndDisplayBox() 
+    private void displayColoredBox(ColorRGBA color)
     {
         Geometry boxGeometry = new Geometry("Box", new Box(1, 1, 1));
         Material boxMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        boxMaterial.setColor("Color", ColorRGBA.Blue);
+        boxMaterial.setColor("Color", color);
         boxGeometry.setMaterial(boxMaterial);
         rootNode.attachChild(boxGeometry);
     }
-    
+
     @Override
-    public void onAction(String name, boolean isKeyPressed, float tpf) {
+    public void onAction(String name, boolean isPressed, float tpf) {
         switch (name)
         {
             case MAPPING_FIRST_MSG:
-                if (!isKeyPressed)
+                if (!isPressed)
                     gameNarrator.talk("Hi there. Welcome to Abner Coimbre's blue box demo.",
                                       "Sounds/bluebox1.wav");
                 break;
+                
             case MAPPING_SECOND_MSG:
-                if (!isKeyPressed)
+                if (!isPressed)
                     gameNarrator.talk("Congratulations! Your narrator program is working perfectly.",
                                        "Sounds/bluebox2.wav");
                 break;
+                
             case MAPPING_THIRD_MSG:
-                if (!isKeyPressed)
+                if (!isPressed)
                     gameNarrator.talk("You can now implement the narrator to Yaguez Virtual Factory 2.0",
                                       "Sounds/bluebox3.wav");
                 break;
+                
             default:
                 break;
         }
     }
-   
-    @Override
-    public void simpleUpdate(float tpf) 
-    {}
 }

@@ -1,9 +1,6 @@
 package mygame;
 
-import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
@@ -12,36 +9,57 @@ import com.jme3.font.BitmapText;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 
-public class NarratorGuiNode extends AbstractAppState
+public class NarratorAppState extends AbstractAppState
 {
-    private SimpleApplication simpleApp;
+    private AssetManager assetManager;
     private BitmapText narratorText;
     private AudioNode narratorAudio;
     
-    public NarratorGuiNode(AssetManager assetManager, Node guiNode)
+    public NarratorAppState(AssetManager assetManager, Node guiNode)
+    {
+        initAssetManager(assetManager);
+        initNarratorAudio();
+        initNarratorText(guiNode);
+    }
+    
+    private void initAssetManager(AssetManager assetManager)
+    {
+        this.assetManager = assetManager;
+    }
+    
+    private void initNarratorAudio()
+    {
+        narratorAudio = new AudioNode();
+    }
+    
+    private void initNarratorText(Node guiNode)
     {
         BitmapFont narratorTextFont = assetManager.loadFont("Interface/ArialRoundedMTBold.fnt");
         narratorText = new BitmapText(narratorTextFont);
         narratorText.setSize(narratorTextFont.getCharSet().getRenderedSize());
-        narratorText.move(400, 300, 1);
+        narratorText.move(440, 80, 1);
         guiNode.attachChild(narratorText);
     }
     
-    public void talk(AssetManager assetManager, String text, String audioPathFile) 
+    public static NarratorAppState newInstance(AssetManager assetManager, Node guiNode)
+    {
+        return new NarratorAppState(assetManager, guiNode);
+    }
+    
+    public void talk(String text, String audioPathFile)
     {
         talk(text);
-        playAudioFile(assetManager, audioPathFile);
+        playAudioFile(audioPathFile);
     }
     
     private void talk(String text)
     {
-        if (narratorText.getCullHint() == CullHint.Always)
-            narratorText.setCullHint(CullHint.Never);
+        if (isHidden())
+            show();
         narratorText.setText(text);
-        System.out.println("Made it here.");
     }
     
-    private void playAudioFile(AssetManager assetManager, String path)
+    private void playAudioFile(String path)
     {
         flushAudio();
         narratorAudio = new AudioNode(assetManager, path, false);
@@ -62,21 +80,26 @@ public class NarratorGuiNode extends AbstractAppState
     {
         return narratorAudio.getStatus() == AudioSource.Status.Stopped;
     }
-    
-    @Override
-    public void initialize(AppStateManager stateManager, Application app)
+
+    public void show()
     {
-        super.initialize(stateManager, app);
-        simpleApp = (SimpleApplication) app;
+        narratorText.setCullHint(CullHint.Never);
+    }
+    
+    public void hide()
+    {
+        narratorText.setCullHint(CullHint.Always);
+    }
+    
+    public boolean isHidden()
+    {
+        return narratorText.getCullHint() == CullHint.Always;
     }
 
     @Override
     public void update(float tpf)
     {
-        if (narratorText == null)
-            return;
-        
         if (hasStoppedTalking())
-            narratorText.setCullHint(CullHint.Always);
+            hide();
     }
 }
