@@ -14,6 +14,8 @@ public class NarratorAppState extends AbstractAppState
     private AssetManager assetManager;
     private BitmapText narratorText;
     private AudioNode narratorAudio;
+    private long textStartTime = 0;
+    private long secondsToWait = 0;
     
     public NarratorAppState(AssetManager assetManager, Node guiNode)
     {
@@ -50,6 +52,13 @@ public class NarratorAppState extends AbstractAppState
     {
         talk(text);
         playAudioFile(audioPathFile);
+    }
+    
+    public void talk(String text, int seconds)
+    {
+        textStartTime = System.currentTimeMillis();
+        secondsToWait = seconds;
+        talk(text);
     }
     
     private void talk(String text)
@@ -99,7 +108,14 @@ public class NarratorAppState extends AbstractAppState
     @Override
     public void update(float tpf)
     {
-        if (hasStoppedTalking())
+        if (hasStoppedTalking() && hasTimeExpired())
             hide();
+    }
+
+    private boolean hasTimeExpired() {
+            if(Math.abs((System.currentTimeMillis() - textStartTime))/1000 > secondsToWait) {
+                return true;
+            }
+            return false;
     }
 }
