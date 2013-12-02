@@ -13,7 +13,7 @@ import com.jme3.system.AppSettings;
 
 public class NarratorTest extends SimpleApplication implements ActionListener
 {
-    NarratorAppState gameNarrator;
+    Narrator gameNarrator;
     
     private static final String MAPPING_FIRST_MSG = "narrator first Message";
     private static final String MAPPING_SECOND_MSG = "narrator second Message";
@@ -39,23 +39,17 @@ public class NarratorTest extends SimpleApplication implements ActionListener
     @Override
     public void simpleInitApp() 
     {
-        shutDownDefaultHUD();
-        initializeNarrator();
+        disableJmonkeyHUD();
+        gameNarrator = new Narrator(stateManager, assetManager, guiNode);
         initKeyboardControls();
-        displayColoredBox(ColorRGBA.Blue);
+        displayColoredBox(ColorRGBA.Red);
         flyCam.setMoveSpeed(15.0f);
     } 
     
-    private void shutDownDefaultHUD()
+    private void disableJmonkeyHUD()
     {
         setDisplayFps(false);
         setDisplayStatView(false);
-    }
-    
-    private void initializeNarrator()
-    {
-        gameNarrator = NarratorAppState.newInstance(assetManager, guiNode);
-        stateManager.attach(gameNarrator);
     }
     
     private void initKeyboardControls() 
