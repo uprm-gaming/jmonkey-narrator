@@ -13,11 +13,11 @@ import com.jme3.system.AppSettings;
 
 public class NarratorTest extends SimpleApplication implements ActionListener
 {
-    Narrator gameNarrator;
+    NarratorAppState gameNarrator;
     
-    private static final String MAPPING_FIRST_MSG = "narrator's first message";
-    private static final String MAPPING_SECOND_MSG = "narrator's second message";
-    private static final String MAPPING_THIRD_MSG = "narrator's third message";
+    private static final String MAPPING_FIRST_MSG = "narrator first Message";
+    private static final String MAPPING_SECOND_MSG = "narrator second Message";
+    private static final String MAPPING_THIRD_MSG = "narrator third Message";
     
     private static final Trigger TRIGGER_FIRST_MSG = new KeyTrigger(KeyInput.KEY_1);
     private static final Trigger TRIGGER_SECOND_MSG = new KeyTrigger(KeyInput.KEY_2);
@@ -39,17 +39,23 @@ public class NarratorTest extends SimpleApplication implements ActionListener
     @Override
     public void simpleInitApp() 
     {
-        disableJmonkeyHUD();
-        gameNarrator = new Narrator(stateManager, assetManager, guiNode);
+        shutDownDefaultHUD();
+        initializeNarrator();
         initKeyboardControls();
-        displayColoredBox(ColorRGBA.Red);
+        displayColoredBox(ColorRGBA.Blue);
         flyCam.setMoveSpeed(15.0f);
     } 
     
-    private void disableJmonkeyHUD()
+    private void shutDownDefaultHUD()
     {
         setDisplayFps(false);
         setDisplayStatView(false);
+    }
+    
+    private void initializeNarrator()
+    {
+        gameNarrator = NarratorAppState.newInstance(assetManager, guiNode);
+        stateManager.attach(gameNarrator);
     }
     
     private void initKeyboardControls() 
@@ -57,13 +63,21 @@ public class NarratorTest extends SimpleApplication implements ActionListener
         String[] mappings = {MAPPING_FIRST_MSG, MAPPING_SECOND_MSG, MAPPING_THIRD_MSG};
         Trigger[] triggers = {TRIGGER_FIRST_MSG, TRIGGER_SECOND_MSG, TRIGGER_THIRD_MSG};
 
-        for (int i = 0; i < mappings.length; i++) 
-        {
+        for (int i = 0; i < mappings.length; i++) {
             inputManager.addMapping(mappings[i], triggers[i]);
             inputManager.addListener(this, mappings[i]);
         }
     }
     
+    private void displayColoredBox(ColorRGBA color)
+    {
+        Geometry boxGeometry = new Geometry("Box", new Box(1, 1, 1));
+        Material boxMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        boxMaterial.setColor("Color", color);
+        boxGeometry.setMaterial(boxMaterial);
+        rootNode.attachChild(boxGeometry);
+    }
+
     @Override
     public void onAction(String name, boolean isPressed, float tpf) {
         switch (name)
@@ -89,14 +103,5 @@ public class NarratorTest extends SimpleApplication implements ActionListener
             default:
                 break;
         }
-    }
-    
-    private void displayColoredBox(ColorRGBA color)
-    {
-        Geometry boxGeometry = new Geometry("Box", new Box(1, 1, 1));
-        Material boxMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        boxMaterial.setColor("Color", color);
-        boxGeometry.setMaterial(boxMaterial);
-        rootNode.attachChild(boxGeometry);
     }
 }

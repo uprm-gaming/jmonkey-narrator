@@ -1,7 +1,6 @@
 package mygame;
 
 import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioSource;
@@ -12,7 +11,7 @@ import com.jme3.font.Rectangle;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 
-public class Narrator extends AbstractAppState
+public class NarratorAppState extends AbstractAppState
 {
     private AssetManager assetManager;
     private BitmapText narratorText;
@@ -20,47 +19,61 @@ public class Narrator extends AbstractAppState
     private long textStartTime = 0;
     private long secondsToWait = 0;
     
-    public Narrator(AppStateManager stateManager, AssetManager assetManager, Node guiNode)
+    public NarratorAppState(AssetManager assetManager, Node guiNode)
+    {
+        initAssetManager(assetManager);
+        initNarratorAudio();
+        initNarratorText(guiNode);
+    }
+    
+    private void initAssetManager(AssetManager assetManager)
     {
         this.assetManager = assetManager;
+    }
+    
+    private void initNarratorAudio()
+    {
         narratorAudio = new AudioNode();
-        initNarratorText(guiNode);
-        stateManager.attach(this);
     }
     
     private void initNarratorText(Node guiNode)
     {
         BitmapFont narratorTextFont = assetManager.loadFont("Interface/ArialRoundedMTBold.fnt");
-
         narratorText = new BitmapText(narratorTextFont);
-        narratorText.setSize(narratorTextFont.getCharSet().getRenderedSize());
         narratorText.setLineWrapMode(LineWrapMode.Word);
-        narratorText.setBox(new Rectangle(325,0, 1280 - 325*2, 200));
+        narratorText.setSize(narratorTextFont.getCharSet().getRenderedSize());
+        
+        Rectangle r = new Rectangle(325,0, 1280 - 325*2, 200);
+        narratorText.setBox(r);
         narratorText.setAlignment(BitmapFont.Align.Center);
         narratorText.move(0, 200, 1);
         
         guiNode.attachChild(narratorText);
     }
-
-    public void talk(String dialogue, int seconds)
+    
+    public static NarratorAppState newInstance(AssetManager assetManager, Node guiNode)
     {
-        textStartTime = System.currentTimeMillis();
-        secondsToWait = seconds;
-        talk(dialogue);
+        return new NarratorAppState(assetManager, guiNode);
     }
     
-    public void talk(String dialogue, String audioPathFile)
+    public void talk(String text, String audioPathFile)
     {
-        talk(dialogue);
+        talk(text);
         playAudioFile(audioPathFile);
     }
     
-    private void talk(String dialogue)
+    public void talk(String text, int seconds)
     {
-        narratorText.setText(dialogue);
-
+        textStartTime = System.currentTimeMillis();
+        secondsToWait = seconds;
+        talk(text);
+    }
+    
+    private void talk(String text)
+    {
         if (isHidden())
             show();
+        narratorText.setText(text);
     }
     
     private void playAudioFile(String path)
@@ -85,16 +98,6 @@ public class Narrator extends AbstractAppState
         return narratorAudio.getStatus() == AudioSource.Status.Stopped;
     }
 
-    private boolean hasTimeExpired() 
-    {
-        boolean timeExpired = false;
-
-        if(Math.abs((System.currentTimeMillis() - textStartTime))/1000 > secondsToWait)
-            timeExpired = true;
-
-        return timeExpired;
-    }
-
     public void show()
     {
         narratorText.setCullHint(CullHint.Never);
@@ -115,5 +118,12 @@ public class Narrator extends AbstractAppState
     {
         if (hasStoppedTalking() && hasTimeExpired())
             hide();
+    }
+
+    private boolean hasTimeExpired() {
+            if(Math.abs((System.currentTimeMillis() - textStartTime))/1000 > secondsToWait) {
+                return true;
+            }
+            return false;
     }
 }
