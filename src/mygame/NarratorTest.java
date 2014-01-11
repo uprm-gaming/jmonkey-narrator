@@ -43,6 +43,7 @@ public class NarratorTest extends SimpleApplication implements ActionListener
         gameNarrator = new Narrator(stateManager, assetManager, guiNode);
         initKeyboardControls();
         displayColoredBox(ColorRGBA.Red);
+        viewPort.setBackgroundColor(ColorRGBA.Brown);
         flyCam.setMoveSpeed(15.0f);
     } 
     
