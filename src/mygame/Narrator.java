@@ -100,12 +100,12 @@ public class Narrator extends AbstractAppState
 
     private boolean hasTimeExpired() 
     {
-        boolean timeExpired = false;
+        boolean hasTimeExpired = false;
 
         if(Math.abs((System.currentTimeMillis() - textStartTime))/1000 > secondsToWait)
-            timeExpired = true;
+            hasTimeExpired = true;
 
-        return timeExpired;
+        return hasTimeExpired;
     }
 
     public void show()
@@ -118,7 +118,6 @@ public class Narrator extends AbstractAppState
     {
         narratorText.setCullHint(CullHint.Always);
         dialogBox.setCullHint(CullHint.Always);
-
     }
     
     public boolean isHidden()
@@ -133,8 +132,8 @@ public class Narrator extends AbstractAppState
             hide();
     }
 
-    private void createTextBackgound(float width, float height) {
-        
+    private void createTextBackgound(float width, float height) 
+    { 
         Quad rectangle = new Quad(width + 20, height + 20);
         dialogBox = new Geometry("My Textured Quad", rectangle);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -146,11 +145,11 @@ public class Narrator extends AbstractAppState
         guiNode.detachAllChildren();
         guiNode.attachChild(dialogBox);
         guiNode.attachChild(narratorText);
-
     }
 
-    private float getTextWidth() {
-        float width = 0;
+    private float getTextWidth() 
+    {
+        float width;
         String text = narratorText.getText();
         
         String text2 = text.toString();
@@ -158,13 +157,14 @@ public class Narrator extends AbstractAppState
         int i = 0;
         int pos = text2.indexOf("\n");
         
-        while (pos > 0) {
-            //System.out.println("---" + text2);
+        while (pos > 0) 
+        {
             s.add(text2.substring(0, pos ));
             text2 = text2.substring(pos);
             pos = text2.indexOf('\n');
             i++;
         }
+        
         s.add(text2);
         
         int length = 0;
