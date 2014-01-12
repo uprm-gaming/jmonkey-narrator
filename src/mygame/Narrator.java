@@ -18,6 +18,12 @@ import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
 import java.util.ArrayList;
 
+/**
+ * A narrator that can be used in any jMonkey game.
+ * 
+ * @author Abner Coimbre @abner7
+ * @author Jose "Pepe" Martinez @pepepr08
+ */
 public class Narrator extends AbstractAppState
 {
     private AssetManager assetManager;
